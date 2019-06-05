@@ -9,26 +9,35 @@ library(composr) # horziontal operations
 
 source("functions/to_alphanumeric_lowercase.R") # function to standardise column headers (like check.names)
 source("functions/analysisplan_factory.R")  # generate analysis plans
+source("functions/remove_responses_from_sumstat.R")  # generate analysis plans
 
 # load questionnaire inputs
 questions <- read.csv("input/questionnaire_questions.csv", 
-                      stringsAsFactors=F, check.names=F)
+                      stringsAsFactors=F, check.names = F)
 
 choices <- read.csv("input/questionnaire_choices.csv", 
-                    stringsAsFactors=F, check.names=F)
-
+                    stringsAsFactors=F, check.names = F)
 
 # generate data
 
 
-response <- xlsform_fill(questions,choices,1000)
+response <- xlsform_fill(questions,choices,514)
+
+
+
 names(response)<-to_alphanumeric_lowercase(names(response))
 
 
-questionnaire <- load_questionnaire(response,questions,choices)
+questionnaire <- load_questionnaire(data = response,
+                                    questions = questions,
+                                    choices = choices)
+
+
 # generate samplingframe
 samplingframe <- xlsform_generate_samplingframe(choices,c("district","yes_no"))
 # samplingframe <- load_samplingframe("./input/Strata_clusters_population.csv")
+
+
 
 
 
@@ -43,19 +52,19 @@ samplingframe <- xlsform_generate_samplingframe(choices,c("district","yes_no"))
 
 # horizontal operations / recoding
 # 
-# r <- response_filtered_w_clusterids %>%
-#   new_recoding(source=how_much_debt, target=hh_with_debt_value) %>% 
-#   recode_to(0.25,where.num.larger.equal = 505000,otherwise.to=0) %>% 
+# r <- data %>%
+#   new_recoding(source=how_much_debt, target=hh_with_debt_value) %>%
+#   recode_to(0.25,where.num.larger.equal = 505000,otherwise.to=0) %>%
 # 
-#   new_recoding(target=hh_unemployed) %>% 
-#   recode_to(0 ,where=!(is.na(response_filtered$work) | is.na(response_filtered$actively_seek_work))) %>% 
-#   recode_to(0.5,where=(work == "no") & (actively_seek_work == "yes")) %>% 
+#   new_recoding(target=hh_unemployed) %>%
+#   recode_to(0 ,where=!(is.na(response_filtered$work) | is.na(response_filtered$actively_seek_work))) %>%
+#   recode_to(0.5,where=(work == "no") & (actively_seek_work == "yes")) %>%
 # 
-#   new_recoding(source=reasons_for_debt, target=hh_unable_basic_needs) %>% 
-#   recode_to(0.25, where.selected.any = c("health","food","education","basic_hh_expenditure"), otherwise.to=0) %>% 
-#   
+#   new_recoding(source=reasons_for_debt, target=hh_unable_basic_needs) %>%
+#   recode_to(0.25, where.selected.any = c("health","food","education","basic_hh_expenditure"), otherwise.to=0) %>%
+# 
 #   end_recoding
-  
+
 # r <- r %>% mutate(score_livelihoods = hh_with_debt_value+hh_unemployed+hh_unable_basic_needs)
 
 # vertical operations / aggregation
@@ -85,7 +94,6 @@ results <- from_analysisplan_map_to_output(response, analysisplan = analysisplan
                                           weighting = strata_weight_fun,
                                           cluster_variable_name = "cluster_id",
                                           questionnaire)
-
 
 # result_labeled <- result$results %>% lapply(map_to_labeled,questionnaire)
 
