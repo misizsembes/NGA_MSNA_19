@@ -112,7 +112,9 @@ library(readr)
 
 ######################FUNCTIONS######################
 
-############Calculate proportions with or without "dont know"
+#' Make proportions
+#'
+#'Calculate proportions with or without "dont know"
 #'@param data dataframe
 #'@param agg_var Name of the geographic aggregation unit(e.g., lga)
 #'@param indicator_index == Column INDEX of the first column to be aggregated
