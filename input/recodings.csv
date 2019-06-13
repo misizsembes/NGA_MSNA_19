@@ -1,4 +1,0 @@
-new variables,condition,value
-hhh_vulnerability,"sm_selected(household_expenditure, any = c(""mother""))",6
-hhh_vulnerability,"sm_selected(household_expenditure, any = c(""female_14_17""))",8
-vulnerability_index,hhh_vulnerability > 8,8

@@ -10,18 +10,23 @@ library(composr) # horziontal operations
 source("functions/to_alphanumeric_lowercase.R") # function to standardise column headers (like check.names)
 source("functions/analysisplan_factory.R")  # generate analysis plans
 source("functions/remove_responses_from_sumstat.R")  # generate analysis plans
+### source("SOME_NGA_SPECIFIC_FUNCTIONS")
 
 # load questionnaire inputs
-questions <- read.csv("input/questionnaire_questions.csv", 
+questions <- read.csv("input/hh_questions_NGA_MSNA_19.csv", 
                       stringsAsFactors=F, check.names = F)
 
-choices <- read.csv("input/questionnaire_choices.csv", 
+choices <- read.csv("input/hh_choices_NGA_MSNA_19.csv", 
                     stringsAsFactors=F, check.names = F)
+
+
+### remove choice une ligne en trop 
+choices <- choices[-251,]
 
 # generate data
 
 
-response <- xlsform_fill(questions,choices,514)
+response <- xlsform_fill(questions,choices,200)
 
 
 
@@ -34,11 +39,10 @@ questionnaire <- load_questionnaire(data = response,
 
 
 # generate samplingframe
-samplingframe <- xlsform_generate_samplingframe(choices,c("district","yes_no"))
+samplingframe <- load_samplingframe(file = "./input/nga_msna_sampling_frame_strata.csv")
 # samplingframe <- load_samplingframe("./input/Strata_clusters_population.csv")
 
-
-
+weighting <- map_to_weighting(sampling.frame = sampling.frame, data = data, data.stratum.column = "")
 
 
 # add cluster ids

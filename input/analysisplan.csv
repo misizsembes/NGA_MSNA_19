@@ -1,4 +1,0 @@
-research.question,sub.research.question,hypothesis,dependent.variable,dependent.variable.type,independent.variable,independent.variable.type,hypothesis.type,repeat.for.variable
-M/F better education?,better access?,do Male hhh have better access to education?,access_school,categorical,resp_gender,categorical,group_difference,
-M/F better education?,better access?,do Male hhh have better access to education?,school_barrier_first,categorical,resp_gender,categorical,group_difference,
-M/F better education?,better access?,do Male hhh have better access to education?,enrolled_total,numerical,resp_gender,categorical,group_difference,
