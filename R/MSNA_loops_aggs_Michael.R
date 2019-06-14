@@ -3,9 +3,10 @@
 #'Calculate proportions with or without "dont know"
 #'@param data dataframe
 #'@param agg_var Name of the geographic aggregation unit(e.g., lga)
-#'@param indicator_index == Column INDEX of the first column to be aggregated
+#'@param indicator_index Column INDEX of the first column to be aggregated
 #'@param dontknow_action a string, either "exclude" if "dont know" should be excluded OR "included" if "dont know" should included
-#'@param dontknow_format == IN QUOTATIONS: How "dont know" is spelled in the data
+#'@param dontknow_format IN QUOTATIONS: How "dont know" is spelled in the data
+#'@return a dataframe in wide format with the aggregated categories in the dataframe for each aggregation unit 
 #'@example
 #'@export
 #'

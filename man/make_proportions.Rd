@@ -12,11 +12,14 @@ make_proportions(data, agg_var, indicator_index,
 
 \item{agg_var}{Name of the geographic aggregation unit(e.g., lga)}
 
-\item{indicator_index}{== Column INDEX of the first column to be aggregated}
+\item{indicator_index}{Column INDEX of the first column to be aggregated}
 
 \item{dontknow_action}{a string, either "exclude" if "dont know" should be excluded OR "included" if "dont know" should included}
 
-\item{dontknow_format}{== IN QUOTATIONS: How "dont know" is spelled in the data}
+\item{dontknow_format}{IN QUOTATIONS: How "dont know" is spelled in the data}
+}
+\value{
+a dataframe in wide format with the aggregated categories in the dataframe for each aggregation unit
 }
 \description{
 Calculate proportions with or without "dont know"
