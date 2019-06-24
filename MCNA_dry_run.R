@@ -1,35 +1,40 @@
 # setup
-
+setwd("/Users/misi/Documents/GitHub/NGA_MSNA_19")
 library(dplyr)
 library(koboquest) # manage kobo questionnairs
+library(parallel) # mclapply
 library(kobostandards) # check inputs for inconsistencies
+#devtools::install_github('mabafaba/kobostandards') 
 library(xlsformfill) # generate fake data for kobo
+#devtools::install_github('mabafaba/xlsformfill') 
 library(hypegrammaR) # stats 4 complex samples
+#devtools::install_github('ellieallien/hypegrammaR') 
 library(composr) # horziontal operations
 
-source("functions/to_alphanumeric_lowercase.R") # function to standardise column headers (like check.names)
+#source("functions/to_alphanumeric_lowercase.R") # function to standardise column headers (like check.names)
 source("functions/analysisplan_factory.R")  # generate analysis plans
 source("functions/remove_responses_from_sumstat.R")  # generate analysis plans
 ### source("SOME_NGA_SPECIFIC_FUNCTIONS")
 
 # load questionnaire inputs
-questions <- read.csv("input/hh_questions_NGA_MSNA_19.csv", 
+questions <- read.csv("input/questions.csv", 
                       stringsAsFactors=F, check.names = F)
 
-choices <- read.csv("input/hh_choices_NGA_MSNA_19.csv", 
+choices <- read.csv("input/choices.csv", 
                     stringsAsFactors=F, check.names = F)
 
 
 ### remove choice une ligne en trop 
-choices <- choices[-251,]
+choices <- choices[-252,]
 
-# generate data
+#generate data
+#response <- xlsform_fill(questions,choices,200)
+
+response <- read_csv("~/Desktop/Nigeria/MSNA/msna_2019/updated_data/UPDATED_CLEANED_DATA2019-06-23_REACH_NGA_2019_MSNA_HHSurvey_Final_21062019_Merged_REACH_NGA_2019_MSNA_HHSurvey.csv")
 
 
-response <- xlsform_fill(questions,choices,200)
-
-
-
+to_alphanumeric_lowercase <-
+function(x){tolower(gsub("[^a-zA-Z0-9_]", "\\.", x))}
 names(response)<-to_alphanumeric_lowercase(names(response))
 
 
@@ -39,12 +44,17 @@ questionnaire <- load_questionnaire(data = response,
 
 
 # generate samplingframe
-samplingframe <- load_samplingframe(file = "./input/nga_msna_sampling_frame_strata.csv")
+sampling.frame <- load_samplingframe(file = "./input/nga_msna_sampling_frame_strata.csv")
 # samplingframe <- load_samplingframe("./input/Strata_clusters_population.csv")
 
-weighting <- map_to_weighting(sampling.frame = sampling.frame, data = data, data.stratum.column = "")
+weighting <- map_to_weighting(sampling.frame = sampling.frame, 
+                              data = response, 
+                              sampling.frame.population.column ="population", 
+                              sampling.frame.stratum.column = "lga_pcode",
+                              data.stratum.column = "lga")
 
 
+design <- map_to_design(data =response, cluster_variable_name = "cluster", weighting_function = weighting)
 # add cluster ids
 
 # cluster_lookup_table <- read.csv("input/combined_sample_ids.csv", 
@@ -76,28 +86,27 @@ weighting <- map_to_weighting(sampling.frame = sampling.frame, data = data, data
 # make analysisplan including all questions as dependent variable by HH type, repeated for each governorate:
 analysisplan<-make_analysisplan_all_vars(response,
                                          questionnaire
-                                         ,independent.variable = "yes_no_host",
-                                         repeat.for.variable = "region",
+                                         ,independent.variable = "group",
+                                         repeat.for.variable = "state",
                                          hypothesis.type = "group_difference" 
                                          )
 
+analysisplan_lga<-make_analysisplan_all_vars(response,
+                                         questionnaire,
+                                         repeat.for.variable =  "lga",
+                                         hypothesis.type = "direct_reporting" )
 
-response$strata<-paste0(response$district,"__",response$yes_no_idp)
 
+#case <- map_to_case("group_difference", "categorical" , "categorical")
 
-strata_weight_fun <- map_to_weighting(sampling.frame = samplingframe,
-                 sampling.frame.population.column = "population",
-                 sampling.frame.stratum.column = "strata",
-                 data.stratum.column = "strata")
+#response$strata<-paste0(response$district,"__",response$yes_no_idp)
 
-response$general_weights <- strata_weight_fun(response)
-
-response$cluster_id <- paste(response$settlement,response$yes_no_idp,sep = "_")
+analysisplan <- analysisplan[1:10]
 
 results <- from_analysisplan_map_to_output(response, analysisplan = analysisplan,
-                                          weighting = strata_weight_fun,
-                                          cluster_variable_name = "cluster_id",
-                                          questionnaire)
+                                          weighting = weighting,
+                                          cluster_variable_name = "cluster",
+                                          questionnaire = questionnaire)
 
 # result_labeled <- result$results %>% lapply(map_to_labeled,questionnaire)
 
@@ -121,6 +130,9 @@ hypegrammaR:::map_to_generic_hierarchical_html(some_results,
                                                filename = "summary_by_dependent_var_then_by_repeat_var.html"
                                                )
 browseURL("summary_by_dependent_var_then_by_repeat_var.html")
+
+map_to_summary_table(results,"summarized_group.csv", questionnaire = questionnaire)
+
 
 
 # not sure this is working correctly.. next on agenda (:
