@@ -5,8 +5,8 @@ setwd("~/Desktop/Nigeria/MSNA")
 uncleaned_data_file_type <- "EXCEL"
 
 cleaning_log_import_folder <- "msna_2019"  #FOLDER WHERE THE CLEANING LOG IS STORED
-cleaning_name <- "REACH_NGA_2019_MSNA_HHSurvey_Final_21062019_Merged"  #NAME OF EXCEL FILE WHERE CLEANING LOG IS STORED
-cleaning_log_org_excel_sheet <- "log"  #CLEANING LOG EXCEL SHEET NAME
+cleaning_name <- "REACH_NGA_2019_MSNA_HHSurvey_Final_15072019_MERGE"  #NAME OF EXCEL FILE WHERE CLEANING LOG IS STORED
+cleaning_log_org_excel_sheet <- "updated_log"  #CLEANING LOG EXCEL SHEET NAME
 cleaning_output_folder <- "updated_cleaning_log"  # UPDATED CLEANING LOG OUTPUT FOLDER
 cleaning_log_org_excel<- paste0(cleaning_log_import_folder,"/",cleaning_name,".xlsx")  #DO NOT TOUCH
 
